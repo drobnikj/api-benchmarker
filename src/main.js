@@ -15,7 +15,7 @@ Apify.main(async () => {
     const routes = {
         getStore: {
             method: 'get',
-            route: `/key-value-stores/${store.storeId}/records/${recordKey}?token=${token}`,
+            route: `/key-value-stores/${store.storeId}?token=${token}`,
             expectedStatusCode: 200,
         },
         putRecord: {
