@@ -3,9 +3,9 @@ const apiBenchmark = require('api-benchmark');
 
 Apify.main(async () => {
     const { token } = Apify.getEnv();
-    const { apiBaseUrl = 'https://api-securitybyobscurity.apify.com/v2'} = await Apify.getInput();
-    const store = await Apify.openKeyValueStore('my-benchmark-test');
-    console.log(`${apiBaseUrl}/key-value-stores/${store.storeId}`);
+    const { apiBaseUrl = 'https://api-securitybyobscurity.apify.com/'} = await Apify.getInput();
+    const store = await Apify.openKeyValueStore('my-benchmark-test', { forceCloud: true });
+    console.log(`Testing Store - ${apiBaseUrl}/key-value-stores/${store.storeId}`);
 
     const service = {
         server1: apiBaseUrl,
@@ -15,33 +15,37 @@ Apify.main(async () => {
     const routes = {
         getStore: {
             method: 'get',
-            route: `/key-value-stores/${store.storeId}?token=${token}`,
+            route: `/v2/key-value-stores/${store.storeId}?token=${token}`,
             expectedStatusCode: 200,
         },
         putRecord: {
             method: 'put',
-            route: `/key-value-stores/${store.storeId}/records/${recordKey}?token=${token}`,
+            route: `/v2/key-value-stores/${store.storeId}/records/${recordKey}?token=${token}`,
             data: { test: 'aaa' },
-            expectedStatusCode: 200,
+            expectedStatusCode: 201,
             headers: {
                 'Content-Type': 'application/json',
             },
         },
         getRecord: {
             method: 'get',
-            route: `/key-value-stores/${store.storeId}/records/${recordKey}?token=${token}`,
+            route: `/v2/key-value-stores/${store.storeId}/records/${recordKey}?token=${token}`,
             expectedStatusCode: 200,
         },
     };
 
+    const opts = {
+        debug: true,
+        stopOnError: false,
+        minSamples: 30,
+    };
+
     return new Promise((resolve, reject) => {
-        apiBenchmark.measure(service, routes, async (err, results) => {
-            console.log(results);
+        apiBenchmark.measure(service, routes, opts, async (err, results) => {
             if (err) return reject(err);
             await Apify.setValue('results', results);
 
             apiBenchmark.getHtml(results, async (error, html) => {
-                console.log(html);
                 if (err) return reject(err);
                 await Apify.setValue('html-results', html, { contentType: 'text/html' });
                 resolve(results);
