@@ -3,7 +3,7 @@ const apiBenchmark = require('api-benchmark');
 
 Apify.main(async () => {
     const { token } = Apify.getEnv();
-    const { apiBaseUrl = 'https://api.apify.com/v2'} = await Apify.getInput();
+    const { apiBaseUrl = 'https://api-securitybyobscurity.apify.com/v2'} = await Apify.getInput();
     const store = await Apify.openKeyValueStore('my-benchmark-test');
     console.log(`${apiBaseUrl}/key-value-stores/${store.storeId}`);
 
