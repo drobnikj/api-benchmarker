@@ -3,7 +3,7 @@ const apiBenchmark = require('api-benchmark');
 
 Apify.main(async () => {
     const { token } = Apify.getEnv();
-    const { apiBaseUrl = 'https://api-securitybyobscurity.apify.com/'} = await Apify.getInput();
+    const { apiBaseUrl } = await Apify.getInput();
     const store = await Apify.openKeyValueStore('my-benchmark-test', { forceCloud: true });
     console.log(`Testing Store - ${apiBaseUrl}/key-value-stores/${store.storeId}`);
 
@@ -37,7 +37,7 @@ Apify.main(async () => {
     const opts = {
         debug: true,
         stopOnError: false,
-        minSamples: 30,
+        minSamples: 100,
     };
 
     return new Promise((resolve, reject) => {
